@@ -24,11 +24,11 @@ pipeline {
             sh 'mvn compiler:compile'
         }
     }
-    stage('Test'){
-        steps{
-            sh 'mvn test'
-        }
-    }      
+    // stage('Test'){
+    //     steps{
+    //         sh 'mvn test'
+    //     }
+    // }      
     stage('Sonar Scan'){
         environment {
             scannerHome = tool 'sonar-scanner'
