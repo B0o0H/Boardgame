@@ -24,23 +24,23 @@ pipeline {
             sh 'mvn compiler:compile'
         }
     }
-    // stage('Test'){
-    //     steps{
-    //         sh 'mvn test'
-    //     }
-    // }      
-    stage('Sonar Scan'){
-        environment {
-            scannerHome = tool 'sonar-scanner'
-        }
+    stage('Test'){
         steps{
-            withSonarQubeEnv('sonarqube') {
-                sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Boardgame \
-                    -Dsonar.projectName=Boardgame \
-                    -Dsonar.java.binaries=.'''
-            }        
+            sh 'mvn test'
         }
-    }
+    }      
+    // stage('Sonar Scan'){
+    //     environment {
+    //         scannerHome = tool 'sonar-scanner'
+    //     }
+    //     steps{
+    //         withSonarQubeEnv('sonarqube') {
+    //             sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Boardgame \
+    //                 -Dsonar.projectName=Boardgame \
+    //                 -Dsonar.java.binaries=.'''
+    //         }        
+    //     }
+    // }
     stage('Build'){
         steps{
             sh 'mvn package'
