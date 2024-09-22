@@ -5,6 +5,13 @@ pipeline {
     jdk 'jdk17'
     maven 'maven3'
   }
+  
+  environment{
+    region = "ap-southeast-2"
+    cluster = "demoCluster"
+    service = ""
+    ecrRepo = "demo/boardgame"
+  }
 
   stages {
     stage('Git Checkout'){
@@ -21,12 +28,7 @@ pipeline {
         steps{
             sh 'mvn test'
         }
-    }
-    // stage('Build'){
-    //     steps{
-    //         sh 'mvn package'
-    //     }
-    // }        
+    }      
     stage('Sonar Scan'){
         environment {
             scannerHome = tool 'sonar-scanner'
@@ -39,19 +41,29 @@ pipeline {
             }        
         }
     }
-    stage('Build Image'){
+    stage('Build'){
         steps{
-            sh ''
+            sh 'mvn package'
         }
     } 
-    stage('Push Image'){
+    stage('Build $ Push Image to ECR'){
         steps{
-            sh ''
+            withAWS(credentials: 'AWS-Cred', region: 'ap-southeast-2'){
+                def identity = awsIdentity()
+                env.AWS_ACCOUNT = identity.account
+                sh '''aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com' \
+                    docker build -t demo/boardgame . \ 
+                    docker tag demo/boardgame:latest ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest \
+                    docker push ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest'''
+            }
         }
     }
     stage('Deploy into ECS'){
         steps{
-            sh ''
+            withAWS(credentials: 'AWS-Cred', region: 'ap-southeast-2'){
+                // sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+                sh ''' echo "pass" '''
+            }
         }
     }   
 //   stages {
