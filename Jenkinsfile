@@ -28,10 +28,10 @@ pipeline {
     //     }
     // }        
     stage('Sonar Scan'){
+        environment {
+            scannerHome = tool 'sonar-scanner'
+        }
         steps{
-            environment {
-                scannerHome = tool 'sonar-scanner'
-            }
             withSonarQubeEnv('sonarqube') {
                 sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Boardgame \
                     -Dsonar.projectName=Boardgame \
