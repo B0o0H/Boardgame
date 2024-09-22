@@ -51,8 +51,8 @@ pipeline {
             withAWS(credentials: 'AWS-Cred', region: 'ap-southeast-2'){
                 def identity = awsIdentity()
                 env.AWS_ACCOUNT = identity.account
-                sh '''aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com' \
-                    docker build -t demo/boardgame . \ 
+                sh '''aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com \
+                    docker build -t demo/boardgame . \
                     docker tag demo/boardgame:latest ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest \
                     docker push ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest'''
             }
