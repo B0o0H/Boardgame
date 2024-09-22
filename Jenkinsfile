@@ -54,9 +54,9 @@ pipeline {
                     env.AWS_ACCOUNT = identity.account
                     sh '''
                     aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com 
-                    sudo docker build -t demo/boardgame . 
-                    sudo docker tag demo/boardgame:latest ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest
-                    sudo docker push ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest
+                    docker build -t demo/boardgame . 
+                    docker tag demo/boardgame:latest ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest
+                    docker push ${AWS_ACCOUNT}.dkr.ecr.${region}.amazonaws.com/${ecrRepo}:latest
                     '''
                 }
             }
